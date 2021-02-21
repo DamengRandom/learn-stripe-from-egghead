@@ -1,8 +1,17 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import Head from 'next/head';
+import Link from "next/link";
+import styles from '../styles/Home.module.css';
 import products from "../products.json";
+import { useCart } from "../hooks/use-cart";
 
 export default function Home() {
+  const {
+    subTotal,
+    numberOfItems,
+    addToCart,
+    checkout,
+  } = useCart();
+
   return (
     <div className={styles.container}>
       <Head>
@@ -19,15 +28,34 @@ export default function Home() {
           The best space Jellyfish swag in the universe!
         </p>
 
+        <div>
+          <p><strong>Items: </strong>{numberOfItems}</p>
+          <p><strong>Total Costs: </strong>${subTotal}</p>
+          <button
+            className={styles.button}
+            onClick={checkout}
+          >
+            Checkout
+          </button>
+        </div>
+
         <ul className={styles.grid}>
           {products.map(({id, title, description, image, price}) => (
             <li key={id} className={styles.card}>
-              <a href="https://nextjs.org/docs">
-                <img src={image} alt={title} />
-                <h3>{title}</h3>
-                <p>${price}</p>
-                <p>{description}</p>
-              </a>
+              <Link href={`/products/${id}`}>
+                <a>
+                  <img src={image} alt={title} />
+                  <h3>{title}</h3>
+                  <p>${price}</p>
+                  <p>{description}</p>
+                </a>
+              </Link>
+              <div>
+                <button className={styles.button}
+                  onClick={() => {
+                    addToCart({id});
+                  }}>Add To Cart</button>
+              </div>
             </li>
           ))}
         </ul>
